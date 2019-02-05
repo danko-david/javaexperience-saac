@@ -1,0 +1,285 @@
+
+/**************************** General style ***********************************/
+
+textarea.saac
+{
+	tab-size: 4;
+}
+
+.saac
+{
+	display: inline-block;
+	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+	vertical-align: top;
+}
+
+button.glyphicon
+{
+	 border:none;
+	 background-color: white;
+	 margin: 3px;
+}
+
+.saac.saac_no_show
+{
+	display:none !important;
+}
+
+.saac.saac_hidden_console_content
+{
+	display:block;
+}
+
+/***************************** Menu styles ************************************/
+
+.saac_menubar
+{
+	display: block;
+	font-size: 25px;
+	margin-bottom: 15px;
+}
+
+.saac_menubar > *,
+.saac_argument_menu > *
+{
+	padding: 10px;
+	box-shadow: 0 3px 5px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.saac_menubar > *:hover,
+.saac_argument_menu > *:hover
+{
+	box-shadow: 0 7px 15px rgba(0,0,0,0.25), 0 7px 16px rgba(0,0,0,0.22);
+}
+
+.saac.glyphicon.saac_disabled
+{
+	background-color: grey;
+	color: white;
+}
+
+
+/************************** clipboard tricks **********************************/
+
+.saac_operation_insert_from_clipboard
+{
+	position: relative;
+}
+
+.saac_operation_insert_from_clipboard textarea
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.saac_operation_insert_from_clipboard.active
+{
+	border: 3px solid blue;
+	padding: 7px;
+}
+
+/******************************* Argument menu ********************************/
+
+.saac_argument_menu
+{
+	display:inline-block;
+	margin: 3px;
+	/*float: left;
+	min-height: 120px;*/
+}
+
+.saac_argument_menu > *
+{
+	display:none;
+	margin-bottom: 6px;
+	padding: 3px;
+	font-size: 18px;
+}
+
+.saac_argument_menu > .saac_show_menu
+{
+	display:inline-block;
+	/*font-size: 10px;*/
+}
+
+.saac_argument_menu:hover > .saac_show_menu
+{
+	display:none;
+}
+
+.saac_argument_menu:hover > *
+{
+	/*display:inline-block;*/
+	display:block;
+}
+
+/************************** Varadic add/remove function ***********************/
+
+.saac_varadic_remove,
+.saac_varadic_add
+{
+	display: inline-block;
+	margin-bottom: 6px;
+	padding: 3px;
+	font-size: 18px;
+	align:center;
+}
+
+/* Show varadic add button in the argument container and remove button in the 
+ *,function container if the type is supports */
+.saac_argument.saac_arg_varadric > .saac_argument_variadic_menu,
+.saac_argument.saac_arg_varadric > .saac_arg_container
+	> .saac_function_container > .saac_varadic_remove
+{
+	display: block;
+}
+
+.saac_argument.saac_arg_varadric > .saac_arg_container
+	> .saac_function_container > .saac_varadic_remove,
+.saac_argument_variadic_menu,
+.saac_varadic_remove
+{
+	display: inline-block;
+	vertical-align: center;
+}
+
+/**************************** function container ******************************/
+
+.saac_menubar,
+.saac_function_container > *
+{
+	vertical-align: top;
+}
+
+.saac_function_autocomplete
+{
+	margin-left:20px;
+}
+
+.saac_function_description
+{
+	display: block;
+	color: rgba(0, 67, 255, 0.72);
+	
+}
+
+.saac_function_container
+{
+	box-shadow: 0 3px 5px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	display: block;
+	/*border: 3px solid red;*/
+}
+
+.saac_arg_container
+{
+	/*border: 3px solid blue;*/
+	/*display:block;
+	margin-left: 10px;
+	max-width: calc(100% - 20px);*/
+	display: inline-block;
+}
+
+.saac_f_arguments
+{
+	display: block;
+	padding: 5px;
+}
+
+.saac_argument
+{
+	display: block;
+	/*border: 3px solid green;*/
+	box-shadow: 0 3px 5px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	margin-left: 5px;
+	margin-top: 5px;
+}
+
+/*vertical/horizontal*/
+/*.saac_function_container.saac_viewmode_horizontal
+	> .saac_f_arguments,*/
+.saac_function_container.saac_viewmode_horizontal
+	> .saac_f_arguments
+	> .saac_argument
+{
+	display:inline-block;
+}
+
+
+
+/******************************* Color profile ********************************/
+
+.saac_function_ok_assembly
+{
+	background-color: lightgreen;
+}
+
+.saac_function_ok_runtime
+{
+	background-color: lightyellow;
+}
+
+.saac_function_fail
+{
+	background-color: lightred;
+}
+
+.saac_f_ret_type,
+.saac_arg_type
+{
+	font-size: 12px;
+	color: #C27331;
+	display: inline-block;
+}
+
+.saac_arg_name
+{
+	font-size: 13px;
+	color:grey;
+}
+
+.saac_arg_descr
+{
+	color: #5A5A5A;
+}
+
+.saac_function_autocomplete
+{
+	color:#000000;
+	font-weight: bold;
+	font-size:16px;
+}
+
+/**TODO**/
+.saac.saac_arg_descr,
+.saac.saac_arg_name,
+.saac.saac_f_ret_type
+{
+	vertical-align: sub;
+}
+
+.saac_f_arguments
+{
+	display: inline-block
+}
+/******************************* Overview mode ********************************/
+
+.saac_overview_mode .saac_function_description,
+.saac_overview_mode .saac_show_menu
+{
+	display:none;
+}
+
+.saac_overview_mode .saac_f_arguments:hover .saac_function_description,
+.saac_overview_mode .saac_f_arguments:hover .saac_show_menu
+{
+	display:inline-block;
+}
+
+

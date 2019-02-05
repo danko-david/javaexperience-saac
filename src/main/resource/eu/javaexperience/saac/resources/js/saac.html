@@ -1,0 +1,117 @@
+
+<div class="saac_templates">
+
+	<script type="text/xml" data-template="saac/argument">
+		<div class="saac saac_argument">
+			<!-- TODO Toolbar -->
+			<div class="saac saac_arg_type"></div> <div class="saac saac_arg_name"></div>:<div class="saac saac_arg_descr"></div><br/>
+			
+			
+			<div class="saac saac_argument_menu">
+				<div class="saac saac_show_menu glyphicon glyphicon-eye-open"></div>
+				<div class="saac saac_operation_remove glyphicon glyphicon-remove-circle" data-toggle="tooltip" title="Eljárás törlése">
+				</div>
+				
+				<div class="saac saac_operation_clipboard_cut glyphicon glyphicon-scissors" data-toggle="tooltip" title="Eljárás kivágása">
+				</div>
+		
+				<div class="saac saac_operation_insert_from_clipboard glyphicon glyphicon-paste" data-toggle="tooltip" title="Eljárás beillesztése">
+					<textarea class="saac saac_clipboard_insert_area"></textarea>
+				</div>
+				
+				<div class="saac saac_operation_all_clipboard glyphicon glyphicon-copy" data-toggle="tooltip" title="Eljárás másolása">
+				</div>
+			</div>
+		
+			<div class="saac saac_arg_container">
+				
+			</div>
+		
+			<div class="saac saac_argument_variadic_menu">
+				<button class="saac saac_varadic_add glyphicon glyphicon-plus-sign" data-toggle="tooltip" title="Paraméter hozzáadása"></button>
+			
+			</div>
+		</div>
+	</script>
+	
+	<script type="text/xml" data-template="saac/function_container">
+		<div class="saac saac_function_container">
+			<div class="saac saac_function_description"></div>
+			<button class="saac saac_varadic_remove glyphicon glyphicon-minus-sign"></button>
+			<!-- 
+				Autocomplete-nél:
+					kell a container szülőjének a tipusa
+			
+			A funkciók 3 szintje:
+				- "generálás futás időben": SimpleGet<GetBy1<?, ?>> 
+				- Elsőrendű függvények: GetBy<Return, Input>
+				- util függvények: concat("valami: ", 12)
+			 -->
+			
+			<input type="hidden" name="w" class="saac f_wrapper"/>
+			
+			
+			<input type="hidden" name="f" class="saac saac_f_function_id"/>
+			
+			<div class="saac saac_f_ret_type"></div><br/>
+			
+			<input type="text" class="saac saac_function_autocomplete autocomplete" data-originsize="5" size="5" placeholder=""/>
+			<button class="saac saac_view_arguments_mode glyphicon glyphicon-resize-vertical"></button>
+			
+			<div class="saac saac_f_arguments">
+				<!-- entries -->
+			</div>
+		</div>
+	</script>
+	
+	<script type="text/xml" data-template="saac/main">
+		<div class="saac saac_entry_point">
+			<div class="saac saac_menubar">
+				<div class="saac saac_operation_remove saac_top_level_opearation glyphicon glyphicon-remove-circle" data-toggle="tooltip" title="Eljárás törlése">
+				</div>
+				
+				<div class="saac saac_operation_clipboard_cut saac_top_level_opearation glyphicon glyphicon-scissors" data-toggle="tooltip" title="Eljárás kivágása">
+				</div>
+		
+				<div class="saac saac_operation_insert_from_clipboard saac_top_level_opearation glyphicon glyphicon-paste" data-toggle="tooltip" title="Eljárás beillesztése">
+					<textarea class="saac saac_clipboard_insert_area"></textarea>
+				</div>
+				
+				<div class="saac saac_operation_all_clipboard saac_top_level_opearation glyphicon glyphicon-copy" data-toggle="tooltip" title="Eljárás másolása">
+				</div>
+				
+				<div class="saac saac_operation_save saac_top_level_opearation glyphicon glyphicon-floppy-disk" data-toggle="tooltip" title="Eljárás mentése lemezre">
+				</div>
+				
+				<div class="saac saac_operation_execute saac_top_level_opearation glyphicon glyphicon-triangle-right" data-toggle="tooltip" title="Eljárás futtatása">
+				</div>
+				
+				<div class="saac saac_operation_show_console saac_top_level_opearation glyphicon glyphicon-console" data-toggle="tooltip" title="Konzol megnyitása">
+				</div>
+			</div>
+			
+			<div class="saac saac_project_file_container">
+				
+			</div>
+			
+			<div class="saac saac_primary_container">
+				<div class="saac saac_no_show saac_root_accept_type"></div>
+				<div class="saac saac_arg_type saac_root_type_name"></div>
+			</div>
+			
+			
+			<div class="saac saac_no_show saac_hidden_console_content">
+				<div class="saac saac_console_root">
+					<pre class="saac saac_log_container">
+					
+					</pre>
+				</div>
+			</div>
+			
+		</div>
+	</script>
+	
+	<script type="text/xml" data-template="saac/type">
+	</script>
+	
+</div>
