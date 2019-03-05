@@ -31,7 +31,7 @@ public class SaacFunctionCollection
 	
 	public SaacFunctionCollection(Class... functionClasses)
 	{
-		registerClasses(functionClasses);		
+		registerClasses(functionClasses);
 	}
 	
 	public Map<String, PreparedFunction> getFunctions()

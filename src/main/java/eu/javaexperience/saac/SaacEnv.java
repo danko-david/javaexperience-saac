@@ -147,9 +147,9 @@ public class SaacEnv
 	
 	protected Object parse(DataObject obj, Class<?> accept)
 	{
-		//{"id":"","search":"","parent":null,"args":[]}
+		//{"id":"","content":"","parent":null,"args":[]}
 		{
-			String id = extractString(obj, "id");
+			String id = extractString(obj, SaacTools.SAAC_FIELD_ID);
 			if(null != id)
 			{
 				PreparedFunction pp = functionSet.get(id);
@@ -265,28 +265,28 @@ public class SaacEnv
 		
 		if(null != accept)
 		{
-			final String search = extractString(obj, "search");
-			if(null != search)
+			final String content = extractString(obj, SaacTools.SAAC_FIELD_CONTENT);
+			if(null != content)
 			{
 				if(accept.isEnum())
 				{
-					return EnumTools.getByName((Class) accept, search);
+					return EnumTools.getByName((Class) accept, content);
 				}
 	
 				CastTo to = CastTo.getCasterRestrictlyForTargetClass(accept);
 				if(null != to)
 				{
-					return to.cast(search);
+					return to.cast(content);
 				}
 				
-				if(search.startsWith("$"))
+				if(content.startsWith("$"))
 				{
 					return new SaacGetByWrapper<Object, Map<String,Object>>()
 					{
 						@Override
 						public Object getBy(Map<String, Object> a)
 						{
-							return a.get(search);
+							return a.get(content);
 						}
 						
 						@Override
@@ -298,7 +298,7 @@ public class SaacEnv
 						@Override
 						public Object[] getArgs()
 						{
-							return new Object[]{search};
+							return new Object[]{content};
 						}
 					};
 				}
@@ -309,7 +309,7 @@ public class SaacEnv
 						@Override
 						public Object getBy(Object a)
 						{
-							return search;
+							return content;
 						}
 						
 						@Override
@@ -321,7 +321,7 @@ public class SaacEnv
 						@Override
 						public Object[] getArgs()
 						{
-							return new Object[]{search};
+							return new Object[]{content};
 						}
 					};
 				}

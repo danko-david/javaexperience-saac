@@ -22,6 +22,11 @@ import eu.javaexperience.saac.SaacEnv.SaacClosureInfo;
 
 public class SaacTools
 {
+	public static final String SAAC_FIELD_ID = "id";
+	public static final String SAAC_FIELD_CONTENT = "content";
+	public static final String SAAC_FIELD_ARGUMENTS = "args";
+	
+	
 	protected static final Logger LOG = JavaExperienceLoggingFacility.getLogger(new Loggable("SaacTools", LogLevel.INFO));
 	
 	public static void execScript(String file, Map<String, Object> env) throws FileNotFoundException, IOException
