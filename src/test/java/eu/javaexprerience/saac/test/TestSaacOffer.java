@@ -19,7 +19,7 @@ public class TestSaacOffer
 	{
 		SaacContainer root = SaacContainer.create(BoolFunctions.class, "and");
 		
-		Object[] off = SaacTestTools.offer(root, 0);
+		Object[] off = SaacTestTools.offerFromDefaults(root, 0);
 		
 		assertTrue(SaacTestTools.constainsFunction(off, BoolFunctions.class, "or"));
 		assertTrue(SaacTestTools.constainsFunction(off, ComparableFunctions.class, "isBetween"));
@@ -32,7 +32,7 @@ public class TestSaacOffer
 	{
 		SaacContainer root = SaacContainer.create(StringFunctions.class, "swapExactString");
 		
-		Object[] off = SaacTestTools.offer(root, 0);
+		Object[] off = SaacTestTools.offerFromDefaults(root, 0);
 		
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "castTo"));
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "createMap"));
@@ -45,7 +45,7 @@ public class TestSaacOffer
 	{
 		SaacContainer root = SaacContainer.create(SaacFunctionsForTest.class, "__fixtureAssert");
 		
-		Object[] off = SaacTestTools.offer(root, 0);
+		Object[] off = SaacTestTools.offerFromDefaults(root, 0);
 		
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "isSValue"));
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "isIValue"));
@@ -61,7 +61,7 @@ public class TestSaacOffer
 	{
 		SaacContainer root = SaacContainer.create(SaacFunctionsForTest.class, "isSValue");
 		
-		Object[] off = SaacTestTools.offer(root, 0);
+		Object[] off = SaacTestTools.offerFromDefaults(root, 0);
 		
 		assertTrue(SaacTestTools.constainsFunction(off, StringFunctions.class, "isEndsWith"));
 		assertTrue(SaacTestTools.constainsFunction(off, BoolFunctions.class, "not"));
@@ -75,7 +75,7 @@ public class TestSaacOffer
 	{
 		SaacContainer root = SaacContainer.create(SaacFunctionsForTest.class, "__fixtureAct");
 		
-		Object[] off = SaacTestTools.offer(root, 0);
+		Object[] off = SaacTestTools.offerFromDefaults(root, 0);
 		
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "deleteByDescision"));
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "updateByDescision"));
@@ -87,7 +87,7 @@ public class TestSaacOffer
 	{
 		SaacContainer root = SaacContainer.create(SaacFunctionsForTest.class, "deleteByDescision");
 		
-		Object[] off = SaacTestTools.offer(root, 0);
+		Object[] off = SaacTestTools.offerFromDefaults(root, 0);
 		
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "isSValue"));
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "isIValue"));
@@ -102,7 +102,7 @@ public class TestSaacOffer
 		
 		SaacFunctionsForTest.__fixtureActExt(SaacFunctionsForTest.deleteByExtDescision(null));
 		
-		Object[] off = SaacTestTools.offer(root, 0);
+		Object[] off = SaacTestTools.offerFromDefaults(root, 0);
 		
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "deleteByExtDescision"));
 		
@@ -117,7 +117,7 @@ public class TestSaacOffer
 		
 		SaacFunctionsForTest.__fixtureActExt(SaacFunctionsForTest.deleteByExtDescision(null));
 		
-		Object[] off = SaacTestTools.offer(root, 0);
+		Object[] off = SaacTestTools.offerFromDefaults(root, 0);
 		
 		SaacFunctionsForTest.__fixtureActMod(SaacFunctionsForTest.modifyByDescision(null));
 		

@@ -10,7 +10,7 @@ public class TestAccurateOfferV1
 	@Test
 	public void test_simple_offer_type()
 	{
-		SaacTestComponents def = SaacTestTools.createDefaultSaacTestComponents();
+		SaacTestComponents def = SaacTestTools.createSaacTestDefaultComponents();
 		
 		SimpleRpcRequest req = def.createRpcRequest();
 		

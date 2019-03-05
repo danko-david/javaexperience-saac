@@ -29,19 +29,11 @@ public class SaacTestTools
 		{
 			return new SimpleRpcRequest(createRpcSession());
 		}
-		
-		/*public void use()
-		{
-			
-			
-		}*/
 	}
 	
-	public static SaacTestComponents createDefaultSaacTestComponents()
+	public static SaacTestComponents createSaacTestDefaultComponents()
 	{
-		SaacTestComponents ret = new SaacTestComponents();
-		
-		ret.coll = new SaacFunctionCollection
+		return createSaacWithComponents
 		(
 			BoolFunctions.class,
 			GeneralFunctions.class,
@@ -52,13 +44,36 @@ public class SaacTestTools
 			ComparableFunctions.class,
 			SaacFunctionsForTest.class
 		);
-		
+	}
+	
+	public static SaacTestComponents createSaacWithComponents(Class... clss)
+	{
+		SaacTestComponents ret = new SaacTestComponents();
+		ret.coll = new SaacFunctionCollection(clss);
 		return ret;
 	}
 	
-	public static Object[] offer(SaacContainer cnt, int arg)
+	public static Object[] offerFromDefaults(SaacContainer cnt, int arg)
 	{
-		SaacTestComponents def = SaacTestTools.createDefaultSaacTestComponents();
+		SaacTestComponents def = SaacTestTools.createSaacTestDefaultComponents();
+		
+		SimpleRpcRequest req = def.createRpcRequest();
+		
+		return (Object[]) SaacRpc.offerForType
+		(
+			req,
+			cnt.getId(),
+			0,
+			null,
+			null,
+			null,
+			null
+		);
+	}
+	
+	public static Object[] offerFrom(SaacContainer cnt, int arg, Class... components)
+	{
+		SaacTestComponents def = SaacTestTools.createSaacWithComponents(components);
 		
 		SimpleRpcRequest req = def.createRpcRequest();
 		
