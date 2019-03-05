@@ -250,11 +250,6 @@ public class SaacRpc
 		
 		for(PreparedFunction pp:pps)
 		{
-			if(pp.getId().endsWith(".isEtc"))
-			{
-				System.out.println("");
-			}
-			
 			Type fret = pp.getReturning().getType();
 			
 			if(isAcceptable(req, fret))
