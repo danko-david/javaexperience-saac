@@ -119,14 +119,14 @@ public class TestSaacOffer
 		
 		Object[] off = SaacTestTools.offer(root, 0);
 		
-		SaacTestTools.printOffers(off);
-		
 		SaacFunctionsForTest.__fixtureActMod(SaacFunctionsForTest.modifyByDescision(null));
 		
 		assertTrue(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "modifyByDescision"));
 		
 		assertFalse(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "updateByDescision"));
 		assertFalse(SaacTestTools.constainsFunction(off, SaacFunctionsForTest.class, "deleteByDescision"));
+		
+		//SaacTestTools.printOffers(off);
 	}
 	
 }
