@@ -250,6 +250,11 @@ public class SaacRpc
 		
 		for(PreparedFunction pp:pps)
 		{
+			if(pp.getId().endsWith(".isEtc"))
+			{
+				System.out.println("");
+			}
+			
 			Type fret = pp.getReturning().getType();
 			
 			if(isAcceptable(req, fret))
@@ -458,7 +463,8 @@ public class SaacRpc
 			sourceType instanceof Class
 		)
 		{
-			return ((Class) targetType).isAssignableFrom(((Class)sourceType));
+			return targetType == sourceType;
+			//return ((Class) targetType).isAssignableFrom(((Class)sourceType));
 		}
 		
 		if
@@ -530,6 +536,35 @@ public class SaacRpc
 		{
 			Type act = ((ParameterizedType) targetType).getRawType();
 			return isAcceptable(act, sourceType);
+		}
+		
+		if(targetType instanceof WildcardType)
+		{
+			WildcardType wt = (WildcardType) targetType;
+			Type[] b = null;
+			if(null != (b = wt.getLowerBounds()))
+			{
+				for(Type t:b)
+				{
+					if(!isAcceptable(t, sourceType))
+					{
+						return false;
+					}
+				}
+			}
+			
+			if(null != (b = wt.getUpperBounds()))
+			{
+				for(Type t:b)
+				{
+					if(!isAcceptable(sourceType, t))
+					{
+						return false;
+					}
+				}
+			}
+			
+			return true;
 		}
 		
 		/*if(targetType instanceof TypeVariable)
