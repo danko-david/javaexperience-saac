@@ -190,7 +190,7 @@ public class SaacEnv
 					
 					int acc = i;
 					//is there a better way to check variadic?
-					if(ps.length > 0 && ps[ps.length-1].getClass().isArray())
+					if(ps.length > 0 && Mirror.extracClass(ps[ps.length-1].getType()).isArray())
 					{
 						acc = ps.length-1;
 					}
