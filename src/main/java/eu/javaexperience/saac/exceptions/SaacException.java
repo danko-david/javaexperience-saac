@@ -1,5 +1,7 @@
 package eu.javaexperience.saac.exceptions;
 
+import eu.javaexperience.reflect.Mirror;
+
 public class SaacException extends RuntimeException
 {
 	/**
@@ -29,4 +31,8 @@ public class SaacException extends RuntimeException
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
+	public String toDetailedMessage()
+	{
+		return toString();
+	}
 }

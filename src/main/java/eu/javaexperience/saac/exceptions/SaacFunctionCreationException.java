@@ -1,5 +1,9 @@
 package eu.javaexperience.saac.exceptions;
 
+import java.util.Arrays;
+
+import eu.javaexperience.functional.saac.Functions.PreparedFunction;
+
 public class SaacFunctionCreationException extends SaacException
 {
 	public SaacFunctionCreationException() {}
@@ -14,6 +18,7 @@ public class SaacFunctionCreationException extends SaacException
 		super(cause);
 	}
 	
+	public PreparedFunction function;
 	public String functionName;
 	public Object arguments;
 	
@@ -33,4 +38,27 @@ public class SaacFunctionCreationException extends SaacException
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
+	public String toDetailedMessage()
+	{
+		String args = "";
+		if(null == arguments)
+		{
+			args = "null";
+		}
+		else if(arguments.getClass().isArray())
+		{
+			try
+			{
+			args = Arrays.toString((Object[])arguments);
+			}
+			catch(Exception e)
+			{}
+		}
+		else
+		{
+			args = arguments.toString();
+		}
+		return getMessage()+" function: "+function+", functionName: "+functionName+", arguments: "+args;
+	}
+	
 }

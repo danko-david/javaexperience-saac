@@ -157,7 +157,9 @@ public class SaacEnv
 				PreparedFunction pp = functionSet.get(id);
 				if(null == pp)
 				{
-					throw new RuntimeException("Function doesn't exists: "+id);
+					SaacFunctionCreationException ex = new SaacFunctionCreationException("Function doesn't exists: "+id);
+					ex.functionName = id;
+					throw ex;
 				}
 				
 				DataArray args = obj.getArray("args");
@@ -503,6 +505,7 @@ public class SaacEnv
 			SaacFunctionCreationException t = new SaacFunctionCreationException("Can't create function: "+pp.getName(), e);
 			t.functionName = pp.getName();
 			t.arguments = cre;
+			t.function = pp;
 			throw t;
 		}
 	}

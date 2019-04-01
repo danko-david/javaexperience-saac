@@ -17,6 +17,8 @@ import java.util.Map;
 
 import eu.javaexperience.annotation.FunctionDescription;
 import eu.javaexperience.annotation.FunctionVariableDescription;
+import eu.javaexperience.collection.map.NullMap;
+import eu.javaexperience.collection.map.OneShotMap;
 import eu.javaexperience.collection.map.SmallMap;
 import eu.javaexperience.datareprez.DataObject;
 import eu.javaexperience.functional.saac.AutocompleteProvider;
@@ -36,7 +38,10 @@ import eu.javaexperience.resource.ReferenceCounted;
 import eu.javaexperience.rpc.JavaClassRpcFunctions;
 import eu.javaexperience.rpc.SimpleRpcRequest;
 import eu.javaexperience.rpc.SimpleRpcSession;
+import eu.javaexperience.saac.exceptions.SaacException;
+import eu.javaexperience.text.Format;
 import eu.javaexperience.verify.LanguageTranslatableValidationEntry;
+import eu.javaexperience.verify.TranslationFriendlyValidationEntry;
 /**
  * TODO:
  * 		- nice UI:
@@ -303,16 +308,30 @@ public class SaacRpc
 		{
 			@FunctionVariableDescription(description="Serialized function.",mayNull=false,paramName="function",type=DataObject.class),
 		},
-		returning = @FunctionVariableDescription(description="Validation results for every entry.",mayNull=false,paramName="",type=FunctionDescriptor[].class) 
+		returning = @FunctionVariableDescription(description="Validation results for every entry.",mayNull=false,paramName="",type=List.class) 
     )
-	public static Map<String, List<LanguageTranslatableValidationEntry>> compileAndCheck
+	public static List<TranslationFriendlyValidationEntry> compileAndCheck
 	(
 		SimpleRpcRequest req,
 		DataObject function
 	)
 	{
-		//createUnit((DataObject) o);
-		return new SmallMap<>();
+		Map<String, PreparedFunction> INDEX = (Map<String, PreparedFunction>)((SimpleRpcSession) req.getRpcSession()).get(SAAC_FUNCTION_SET_KEY);
+		List<TranslationFriendlyValidationEntry> ret = new ArrayList<>();
+		try
+		{
+			parse(INDEX, function);
+		}
+		catch(SaacException e)
+		{
+			ret.add(new TranslationFriendlyValidationEntry("saac_error", e.toDetailedMessage(), new OneShotMap<String, String>("stack_trace", Format.getPrintedStackTrace(e))));
+		}
+		catch(Exception e)
+		{
+			ret.add(new TranslationFriendlyValidationEntry("error", Format.getPrintedStackTrace(e), NullMap.instance));
+		}
+		
+		return ret;
 	}
 	
 	@FunctionDescription
