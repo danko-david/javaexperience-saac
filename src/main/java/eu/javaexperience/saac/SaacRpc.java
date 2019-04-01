@@ -320,7 +320,7 @@ public class SaacRpc
 		List<TranslationFriendlyValidationEntry> ret = new ArrayList<>();
 		try
 		{
-			parse(INDEX, function);
+			SaacEnv.create(INDEX, function, null);
 		}
 		catch(SaacException e)
 		{
@@ -694,13 +694,6 @@ public class SaacRpc
 		return saac_sess;
 	}
 	
-	public static SaacEnv parse(Map<String, PreparedFunction> functions, DataObject data)
-	{
-		SaacEnv se = new SaacEnv(functions, null);
-		se.parse(data);
-		return se;
-	}
-	
 	public static boolean execute
 	(
 		SaacEnv se,
@@ -761,6 +754,6 @@ public class SaacRpc
 		ReferenceCounted<PrintWriter> LOGGER
 	)
 	{
-		return execute(parse(functions, data), env, LOGGER);
+		return execute(SaacEnv.create(functions, data, null), env, LOGGER);
 	}
 }
