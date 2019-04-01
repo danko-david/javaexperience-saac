@@ -197,6 +197,18 @@ public class SaacEnv
 					
 					Class reqType = Mirror.extracClass(ps[acc].getType());
 					
+					if(reqType.isArray())
+					{
+						if(dc instanceof DataObject)
+						{
+							DataObject d = (DataObject) dc;
+							if(!isUseful(d.opt(SaacTools.SAAC_FIELD_ID)) && !isUseful(d.opt(SaacTools.SAAC_FIELD_CONTENT)))
+							{
+								dc = d.getArray("args");
+							}
+						}
+					}
+					
 					Object add = null; 
 					switch (dc.getDataReprezType())
 					{
@@ -212,6 +224,7 @@ public class SaacEnv
 						case OBJECT:
 						case CLASS_OBJECT:
 						case RESOURCE:
+							
 							add = create
 							(
 								functionSet,
@@ -340,6 +353,11 @@ public class SaacEnv
 		}
 		
 		return null;
+	}
+	
+	protected static boolean isUseful(Object o)
+	{
+		return null != o && !StringTools.isNullOrTrimEmpty(o.toString());
 	}
 	
 	protected static <T> Object processArray
