@@ -20,6 +20,7 @@ import eu.javaexperience.interfaces.simple.publish.SimplePublish1;
 import eu.javaexperience.reflect.CastTo;
 import eu.javaexperience.reflect.Mirror;
 import eu.javaexperience.reflect.PrimitiveTools;
+import eu.javaexperience.saac.exceptions.SaacFunctionCreationException;
 import eu.javaexperience.text.StringTools;
 
 public class SaacEnv
@@ -493,7 +494,17 @@ public class SaacEnv
 			cre[i] = processSingleParam(pp, pp.getArgs()[i], args[i], env);
 		}
 		
-		return pp.create(cre);
+		try
+		{
+			return pp.create(cre);
+		}
+		catch(Exception e)
+		{
+			SaacFunctionCreationException t = new SaacFunctionCreationException("Can't create function: "+pp.getName(), e);
+			t.functionName = pp.getName();
+			t.arguments = cre;
+			throw t;
+		}
 	}
 	
 	public static <T> Object wrapForRuntime
