@@ -418,20 +418,26 @@ public class SaacEnv
 		
 		if(at instanceof SimpleGet)
 		{
-			return ((SimpleGet) at).get();
+			at = ((SimpleGet) at).get();
 		}
 		else if(at instanceof	//SaacGetByWrapper)
 								GetBy1)
 		{
-			return ((GetBy1) at).getBy(env);
+			at = ((GetBy1) at).getBy(env);
 		}
 		else if(at instanceof	//SaacSimplePublishWrapper)
 								SimplePublish1)
 		{
 			((SimplePublish1) at).publish(env);
+			at = null;
+		}
+		
+		if(null == at)
+		{
 			return null;
 		}
-		else if(at instanceof String)
+		
+		if(at instanceof String)
 		{
 			String str = (String) at;
 			
