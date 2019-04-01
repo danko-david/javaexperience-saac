@@ -8,6 +8,7 @@ import java.util.Stack;
 
 import eu.javaexperience.collection.enumerations.EnumTools;
 import eu.javaexperience.datareprez.DataArray;
+import eu.javaexperience.datareprez.DataCommon;
 import eu.javaexperience.datareprez.DataObject;
 import eu.javaexperience.datareprez.convertFrom.DataLike;
 import eu.javaexperience.exceptions.UnimplementedCaseException;
@@ -438,7 +439,29 @@ public class SaacEnv
 	{
 		if(obj.has(key))
 		{
-			String ret = obj.getString(key);
+			//can be a number or boolean
+			Object o = obj.get(key);
+			
+			if(null == o)
+			{
+				return null;
+			}
+			
+			String ret = null;
+			
+			if(o instanceof DataCommon)
+			{
+				byte[] b = ((DataCommon)o).toBlob();
+				if(null != b)
+				{
+					ret = new String(b);
+				}
+			}
+			else
+			{
+				ret = o.toString();
+			}
+			
 			if(!StringTools.isNullOrTrimEmpty(ret))
 			{
 				return ret;
