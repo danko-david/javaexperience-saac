@@ -188,7 +188,14 @@ public class SaacEnv
 				{
 					DataLike dc = (DataLike) args.get(i);
 					
-					Class reqType = Mirror.extracClass(ps[i].getType());
+					int acc = i;
+					//is there a better way to check variadic?
+					if(ps.length > 0 && ps[ps.length-1].getClass().isArray())
+					{
+						acc = ps.length-1;
+					}
+					
+					Class reqType = Mirror.extracClass(ps[acc].getType());
 					
 					Object add = null; 
 					switch (dc.getDataReprezType())
