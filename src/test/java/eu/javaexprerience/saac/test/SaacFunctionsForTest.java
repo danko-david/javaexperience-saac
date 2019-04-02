@@ -3,13 +3,15 @@ package eu.javaexprerience.saac.test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
+import eu.javaexperience.arrays.ArrayTools;
+import eu.javaexperience.collection.CollectionTools;
 import eu.javaexperience.collection.map.SmallMap;
+import eu.javaexperience.interfaces.simple.SimpleCall;
+import eu.javaexperience.interfaces.simple.SimpleGet;
 import eu.javaexperience.interfaces.simple.getBy.GetBy1;
 
 /**
@@ -103,6 +105,16 @@ public class SaacFunctionsForTest
 		public ModificationInstruction(T mod)
 		{
 			this.mod = mod;
+		}
+	}
+	
+	public static class ModificationInstructions<T extends ModificationCommand>
+	{
+		public List<T> mod = new ArrayList<>();
+		
+		public ModificationInstructions(T... mod)
+		{
+			CollectionTools.inlineAdd(this.mod, mod);
 		}
 	}
 	
@@ -212,6 +224,61 @@ public class SaacFunctionsForTest
 	public static GetBy1<ModificationCommand, ?> funcNewEntryKeys(WellKnownAttributes... atts)
 	{
 		return (a)->newEntryKeys(atts);
+	}
+	
+	public static GetBy1<ModificationInstructions, EvalContext> doAllWhen
+	(
+		GetBy1<Boolean, EvalContext> check,
+		GetBy1<ModificationCommand, EvalContext>... acts
+	)
+	{
+		return new GetBy1<ModificationInstructions, EvalContext>()
+		{
+			@Override
+			public ModificationInstructions getBy(EvalContext a)
+			{
+				if(Boolean.TRUE == check.getBy(a))
+				{
+					ModificationInstructions<ModificationCommand> ret = new ModificationInstructions<>();
+					for(GetBy1<ModificationCommand, EvalContext> act:acts)
+					{
+						ModificationCommand r = act.getBy(a);
+						if(null != r)
+						{
+							ret.mod.add(r);
+						}
+					}
+					
+					return ret;
+				}
+				return null;
+			}
+		};
+	}
+	
+	public static SimpleCall justRunEnv(GetBy1<ModificationCommand, EvalContext> cmd)
+	{
+		return new SimpleCall()
+		{
+			@Override
+			public void call()
+			{
+				cmd.getBy(new EvalContext());
+			}
+		};
+	}
+	
+	public static SimpleGet<ModificationCommand> evalWithEnv(GetBy1<ModificationCommand, EvalContext> cmd)
+	{
+		return new SimpleGet<SaacFunctionsForTest.ModificationCommand>()
+		{
+			@Override
+			public ModificationCommand get()
+			{
+				//in practice you may read thread local variable to acquire the context
+				return cmd.getBy(new EvalContext());
+			}
+		};
 	}
 	
 /****************************** ActByDecision2 ********************************/

@@ -260,12 +260,9 @@ public class SaacEnv
 					
 					add = postWrapFilter(varType, add);
 					
-					if(null != varargs)
+					if(null != varargs && i >= ps.length-1)
 					{
-						if(i >= ps.length-1)
-						{
-							varargs.add(add);
-						}
+						varargs.add(add);
 					}
 					else
 					{

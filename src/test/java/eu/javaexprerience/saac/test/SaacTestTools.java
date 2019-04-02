@@ -37,7 +37,6 @@ public class SaacTestTools
 		public SaacEnv compile(SaacContainer root)
 		{
 			DataObject ser = root.serialize(DataObjectJsonImpl.instane);
-			System.out.println(ser.getImpl());
 			return SaacEnv.create(coll.getFunctions(), ser, null);
 		}
 	}

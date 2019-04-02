@@ -2,6 +2,8 @@ package eu.javaexprerience.saac.test;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.junit.Test;
 
 import eu.javaexperience.functional.BoolFunctions;
@@ -11,6 +13,7 @@ import eu.javaexperience.saac.client.SaacContainer;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.ActorDescriptor;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.EvalContext;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.ModificationCommand;
+import eu.javaexprerience.saac.test.SaacFunctionsForTest.ModificationInstructions;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.WellKnownAttributes;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.WellKnownEntityAttribute;
 import eu.javaexprerience.saac.test.SaacTestTools.SaacTestComponents;
@@ -359,6 +362,67 @@ public class TestSaacAssemble
 		
 		assertEquals("DIMENSION", ad.attributes.get(2).getName());
 		assertEquals("placeholder", ad.attributes.get(2).getValue());
+	}
+	
+	@Test
+	public void testBugVararg()
+	{
+		SaacContainer f = c
+		(
+			"doAllWhen",
+			SaacContainer.create
+			(
+				BoolFunctions.class,
+				"and", 
+				c("isAfterDate", create(System.currentTimeMillis()-15000)),
+				c("isBeforeDate", create(System.currentTimeMillis()+15000))
+			),
+			
+			//direct values being wrapped to getter function
+			c
+			(
+				"newEntryWithAttributes",
+				c("knownAttribute", create(WellKnownAttributes.COLOR.name()), create("placeholder")),
+				c("knownAttribute", create(WellKnownAttributes.CAPACITY.name()), create("placeholder"))
+			),
+			c
+			(
+				"funcNewEntryWithAttributes",
+				c("knownAttribute", create(WellKnownAttributes.COLOR.name()), create("placeholder"))
+				
+			),
+			c
+			(
+				"funcNewEntryKeys",
+				create(WellKnownAttributes.DIMENSION.name())
+			)
+		);
+		
+		SaacTestComponents saac = SaacTestTools.createSaacTestDefaultComponents();
+		SaacEnv env = saac.compile(f);
+		GetBy1<ModificationInstructions<ModificationCommand>, EvalContext> root = (GetBy1<ModificationInstructions<ModificationCommand>, EvalContext>) env.getRoot();
+		
+		EvalContext ctx = new EvalContext();
+		ModificationInstructions<ModificationCommand> cmd = root.getBy(ctx);
+		assertNotNull(cmd);
+		List<ActorDescriptor> ad = (List) cmd.mod;
+		
+		
+		
+		assertEquals(3, ad.size());
+		
+		assertEquals("COLOR", ad.get(0).attributes.get(0).getName());
+		assertEquals("placeholder", ad.get(0).attributes.get(0).getValue());
+		
+		assertEquals("CAPACITY", ad.get(0).attributes.get(1).getName());
+		assertEquals("placeholder", ad.get(0).attributes.get(1).getValue());
+		
+		assertEquals("COLOR", ad.get(1).attributes.get(0).getName());
+		assertEquals("placeholder", ad.get(1).attributes.get(0).getValue());
+		
+		assertEquals("DIMENSION", ad.get(2).attributes.get(0).getName());
+		assertEquals("placeholder", ad.get(2).attributes.get(0).getValue());
+		
 	}
 	
 	//TODO test for errors: not enought argument provided, user compileAndCheckFor that.
