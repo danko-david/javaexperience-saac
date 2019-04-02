@@ -16,7 +16,7 @@ import eu.javaexprerience.saac.test.SaacTestTools.SaacTestComponents;
 
 import static eu.javaexperience.saac.client.SaacContainer.*;
 
-public class SaacTestAssemble
+public class TestSaacAssemble
 {
 	public static SaacContainer c(String name, SaacContainer... cnts)
 	{
