@@ -197,6 +197,23 @@ public class SaacFunctionsForTest
 		return (a)->newEntryWithAttributes(atts);
 	}
 	
+	public static ModificationCommand newEntryKeys(WellKnownAttributes... atts)
+	{
+		ActorDescriptor ret = new ActorDescriptor();
+		ret.createEntity = true;
+		for(WellKnownAttributes a:atts)
+		{
+			ret.attributes.add(newFreeAttribute(a.name(), "placeholder"));
+		}
+		
+		return ret;
+	}
+	
+	public static GetBy1<ModificationCommand, ?> funcNewEntryKeys(WellKnownAttributes... atts)
+	{
+		return (a)->newEntryKeys(atts);
+	}
+	
 /****************************** ActByDecision2 ********************************/
 	
 	public static GetBy1<ActorDescriptor, ExtendedEvalContext> deleteByExtDescision(GetBy1<Boolean, ExtendedEvalContext> eval)

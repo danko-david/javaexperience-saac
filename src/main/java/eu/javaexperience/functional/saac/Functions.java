@@ -234,7 +234,7 @@ public class Functions
 			}
 			catch (Exception e)
 			{
-				SaacFunctionCreationException ex = new SaacFunctionCreationException("Can't create function",e);
+				SaacFunctionCreationException ex = new SaacFunctionCreationException("Can't create function", e);
 				ex.function = this;
 				ex.functionName = id;
 				ex.arguments = arguments;

@@ -195,28 +195,35 @@ public class SaacEnv
 					varargs = new ArrayList<>();
 				}
 				
-				for(int i=0;i<call.length;++i)
+				for(int i=0;i<args.size();++i)
 				{
 					DataLike dc = (DataLike) args.get(i);
 					
 					int acc = i;
+					
+					boolean inVaridaicRange = false;
+					
 					//is there a better way to check variadic?
-					if(null != varargs)
+					if(i >= ps.length-1 && null != varargs)
 					{
+						inVaridaicRange = true;
 						acc = ps.length-1;
 					}
 					
 					Class reqType = Mirror.extracClass(ps[acc].getType());
 					
-					if(reqType.isArray())
+					Class varType = reqType;
+					if(inVaridaicRange)
 					{
-						if(dc instanceof DataObject)
+						varType = reqType.getComponentType();
+					}
+					
+					if(reqType.isArray() && dc instanceof DataObject)
+					{
+						DataObject d = (DataObject) dc;
+						if(!isUseful(d.opt(SaacTools.SAAC_FIELD_ID)) && !isUseful(d.opt(SaacTools.SAAC_FIELD_CONTENT)))
 						{
-							DataObject d = (DataObject) dc;
-							if(!isUseful(d.opt(SaacTools.SAAC_FIELD_ID)) && !isUseful(d.opt(SaacTools.SAAC_FIELD_CONTENT)))
-							{
-								dc = d.getArray("args");
-							}
+							dc = d.getArray("args");
 						}
 					}
 					
@@ -240,7 +247,7 @@ public class SaacEnv
 							(
 								functionSet,
 								(DataObject) dc,
-								reqType
+								varType
 							).root;
 							
 							break;
@@ -251,7 +258,7 @@ public class SaacEnv
 							throw new UnimplementedCaseException(dc.getDataReprezType());
 					}
 					
-					add = postWrapFilter(reqType, add, null != varargs);
+					add = postWrapFilter(varType, add);
 					
 					if(null != varargs)
 					{
@@ -272,7 +279,8 @@ public class SaacEnv
 					(
 						varargs.size() == 1 &&
 						null != varargs.get(0) &&
-						Mirror.extracClass(ps[ps.length-1].getType()).isAssignableFrom(varargs.get(0).getClass()))
+						Mirror.extracClass(ps[ps.length-1].getType()).isAssignableFrom(varargs.get(0).getClass())
+					)
 					{
 						
 						call[ps.length-1] = varargs.get(0);
@@ -282,7 +290,7 @@ public class SaacEnv
 						Class<?> vr = Mirror.extracClass(ps[ps.length-1].getType());
 						Object[] as = tryExtractAsRequested(vr, varargs);
 						
-						call[ps.length-1] = postWrapFilter(vr, as, false);
+						call[ps.length-1] = postWrapFilter(vr, as);
 					}
 				}
 				
@@ -401,16 +409,11 @@ public class SaacEnv
 		}
 	}
 	
-	public static Object postWrapFilter(Class reqType, Object add, boolean insideOfVarargs)
+	public static Object postWrapFilter(Class reqType, Object add)
 	{
 		//comaptible?
 		if(null != reqType && null != add)
 		{
-			if(insideOfVarargs)
-			{
-				reqType = reqType.getComponentType();
-			}
-			
 			if(PrimitiveTools.isPrimitiveClass(reqType))
 			{
 				reqType = PrimitiveTools.toObjectClassType(reqType, reqType);

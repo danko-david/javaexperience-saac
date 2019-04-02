@@ -266,6 +266,101 @@ public class TestSaacAssemble
 		assertEquals("myValue", ad.attributes.get(1).getValue());
 	}
 	
+	@Test
+	public void testEnumVarargs1()
+	{
+		SaacContainer f = c
+		(
+			"doWhen",
+			SaacContainer.create
+			(
+				BoolFunctions.class,
+				"and", 
+				c("isAfterDate", create(System.currentTimeMillis()-15000)),
+				c("isBeforeDate", create(System.currentTimeMillis()+15000))
+			),
+			
+			//direct values being wrapped to getter function
+			c
+			(
+				"newEntryKeys",
+				//using an array declaration for vararg params
+				create(WellKnownAttributes.COLOR),
+				create(WellKnownAttributes.CAPACITY),
+				create(WellKnownAttributes.DIMENSION)
+			)
+		);
+		
+		SaacTestComponents saac = SaacTestTools.createSaacTestDefaultComponents();
+		SaacEnv env = saac.compile(f);
+		GetBy1<ModificationCommand, EvalContext> root = (GetBy1<ModificationCommand, EvalContext>) env.getRoot();
+		
+		EvalContext ctx = new EvalContext();
+		ModificationCommand cmd = root.getBy(ctx);
+		assertNotNull(cmd);
+		ActorDescriptor ad = (ActorDescriptor) cmd;
+		
+		assertEquals(3, ad.attributes.size());
+		
+		assertEquals("COLOR", ad.attributes.get(0).getName());
+		assertEquals("placeholder", ad.attributes.get(0).getValue());
+		
+		assertEquals("CAPACITY", ad.attributes.get(1).getName());
+		assertEquals("placeholder", ad.attributes.get(1).getValue());
+		
+		assertEquals("DIMENSION", ad.attributes.get(2).getName());
+		assertEquals("placeholder", ad.attributes.get(2).getValue());
+	}
+	
+	@Test
+	public void testEnumVarargs2()
+	{
+		SaacContainer f = c
+		(
+			"doWhen",
+			SaacContainer.create
+			(
+				BoolFunctions.class,
+				"and", 
+				c("isAfterDate", create(System.currentTimeMillis()-15000)),
+				c("isBeforeDate", create(System.currentTimeMillis()+15000))
+			),
+			
+			//direct values being wrapped to getter function
+			c
+			(
+				"newEntryKeys",
+				//using an array declaration for vararg params
+				createArray().addArgument
+				(
+					create(WellKnownAttributes.COLOR),
+					create(WellKnownAttributes.CAPACITY),
+					create(WellKnownAttributes.DIMENSION)
+				)
+			)
+		);
+		
+		SaacTestComponents saac = SaacTestTools.createSaacTestDefaultComponents();
+		SaacEnv env = saac.compile(f);
+		GetBy1<ModificationCommand, EvalContext> root = (GetBy1<ModificationCommand, EvalContext>) env.getRoot();
+		
+		EvalContext ctx = new EvalContext();
+		ModificationCommand cmd = root.getBy(ctx);
+		assertNotNull(cmd);
+		ActorDescriptor ad = (ActorDescriptor) cmd;
+		
+		assertEquals(3, ad.attributes.size());
+		
+		assertEquals("COLOR", ad.attributes.get(0).getName());
+		assertEquals("placeholder", ad.attributes.get(0).getValue());
+		
+		assertEquals("CAPACITY", ad.attributes.get(1).getName());
+		assertEquals("placeholder", ad.attributes.get(1).getValue());
+		
+		assertEquals("DIMENSION", ad.attributes.get(2).getName());
+		assertEquals("placeholder", ad.attributes.get(2).getValue());
+	}
+	
 	//TODO test for errors: not enought argument provided, user compileAndCheckFor that.
 	//TODO check for illegal argument exception
 }
