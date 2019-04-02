@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -148,7 +149,7 @@ public class SaacEnv
 			cleanupFunctionSet(fset);
 		}
 	}
-	
+
 	protected Object parse(DataObject obj, Type acceptType)
 	{
 		Class accept = Mirror.extracClass(acceptType);
@@ -166,10 +167,10 @@ public class SaacEnv
 				}
 				
 				DataArray args = obj.getArray("args");
-				Object[] call = new Object[args.size()];
+				Object[] call = new Object[pp.getArgs().length];
 				Param[] ps = pp.getArgs();
 				
-				boolean[] paramWraps = new boolean[call.length];
+				boolean[] paramWraps = new boolean[pp.getArgs().length];
 				boolean wrapRet = false;
 				
 				Class retClass = Mirror.extracClass(pp.getReturning().getType());
@@ -188,13 +189,19 @@ public class SaacEnv
 					;
 				}
 				
+				List<Object> varargs = null;
+				if(ps.length > 0 && Mirror.extracClass(ps[ps.length-1].getType()).isArray())
+				{
+					varargs = new ArrayList<>();
+				}
+				
 				for(int i=0;i<call.length;++i)
 				{
 					DataLike dc = (DataLike) args.get(i);
 					
 					int acc = i;
 					//is there a better way to check variadic?
-					if(ps.length > 0 && Mirror.extracClass(ps[ps.length-1].getType()).isArray())
+					if(null != varargs)
 					{
 						acc = ps.length-1;
 					}
@@ -243,37 +250,39 @@ public class SaacEnv
 						default:
 							throw new UnimplementedCaseException(dc.getDataReprezType());
 					}
-					call[i] = add;
-					//comaptible?
-					if(null != reqType && null != call[i])
+					
+					add = postWrapFilter(reqType, add, null != varargs);
+					
+					if(null != varargs)
 					{
-						if(PrimitiveTools.isPrimitiveClass(reqType))
+						if(i >= ps.length-1)
 						{
-							reqType = PrimitiveTools.toObjectClassType(reqType, reqType);
+							varargs.add(add);
 						}
+					}
+					else
+					{
+						call[i] = add;
+					}
+				}
+				
+				if(null != varargs)
+				{
+					if
+					(
+						varargs.size() == 1 &&
+						null != varargs.get(0) &&
+						Mirror.extracClass(ps[ps.length-1].getType()).isAssignableFrom(varargs.get(0).getClass()))
+					{
 						
-						//TODO add direct wrap: GetBy1<T,?> (or SimplePublish<T>)required and a T given
-						boolean wrapParam = !reqType.isAssignableFrom(call[i].getClass()) || SaacSimplePublishWrapper.class.isAssignableFrom(call[i].getClass());
-						if(wrapParam)
-						{
-							Object o = tryWrapSameOfArray(reqType, call[i]);
-							if(null != o)
-							{
-								call[i] = o;
-								continue;
-							}
-							
-							o = tryWrapConstantAsSourceFunction(reqType, call[i]);
-							if(null != o)
-							{
-								call[i] = o;
-								//not needed to wrap in runtime, we have been done that.
-								continue;
-							}
-							
-							//need to extact or evaluate in runtime, or unamingously: it will be extracted in runtime
-							paramWraps[i] = wrapParam;
-						}
+						call[ps.length-1] = varargs.get(0);
+					}
+					else
+					{
+						Class<?> vr = Mirror.extracClass(ps[ps.length-1].getType());
+						Object[] as = tryExtractAsRequested(vr, varargs);
+						
+						call[ps.length-1] = postWrapFilter(vr, as, false);
 					}
 				}
 				
@@ -379,6 +388,60 @@ public class SaacEnv
 		
 		return null;
 	}
+	
+	public static Object[] tryExtractAsRequested(Class req, List obj)
+	{
+		try
+		{
+			return obj.toArray((Object[]) Array.newInstance(req.getComponentType(), obj.size()));
+		}
+		catch(Exception e)
+		{
+			return obj.toArray();
+		}
+	}
+	
+	public static Object postWrapFilter(Class reqType, Object add, boolean insideOfVarargs)
+	{
+		//comaptible?
+		if(null != reqType && null != add)
+		{
+			if(insideOfVarargs)
+			{
+				reqType = reqType.getComponentType();
+			}
+			
+			if(PrimitiveTools.isPrimitiveClass(reqType))
+			{
+				reqType = PrimitiveTools.toObjectClassType(reqType, reqType);
+			}
+			
+			//add direct wrap: GetBy1<T,?> (or SimplePublish<T>)required and a T given
+			boolean wrapParam = !reqType.isAssignableFrom(add.getClass()) || SaacSimplePublishWrapper.class.isAssignableFrom(add.getClass());
+			wrap:if(wrapParam)
+			{
+				Object o = tryWrapSameOfArray(reqType, add);
+				if(null != o)
+				{
+					add = o;
+					break wrap;
+				}
+				
+				o = tryWrapConstantAsSourceFunction(reqType, add);
+				if(null != o)
+				{
+					add = o;
+					//not needed to wrap in runtime, we have been done that.
+					break wrap;
+				}
+				
+				//need to extact or evaluate in runtime, or unamingously: it will be extracted in runtime
+			}
+		}
+		
+		return add;
+	}
+	
 	
 	public static Object tryWrapSameOfArray(Class reqType, Object object)
 	{

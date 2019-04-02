@@ -4,10 +4,12 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import eu.javaexperience.functional.BoolFunctions;
 import eu.javaexperience.interfaces.simple.getBy.GetBy1;
 import eu.javaexperience.saac.SaacEnv;
 import eu.javaexperience.saac.client.SaacContainer;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.ActorDescriptor;
+import eu.javaexprerience.saac.test.SaacFunctionsForTest.EntityAttribute;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.EvalContext;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.ModificationCommand;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.WellKnownAttributes;
@@ -179,7 +181,7 @@ public class TestSaacAssemble
 				"funcNewEntryWithAttributes",
 				c("knownAttribute", create(WellKnownAttributes.COLOR.name()), create("red"))
 			)
-		);
+		); 
 		
 		SaacTestComponents saac = SaacTestTools.createSaacTestDefaultComponents();
 		SaacEnv env = saac.compile(f);
@@ -219,5 +221,49 @@ public class TestSaacAssemble
 		EvalContext ctx = new EvalContext();
 		ModificationCommand cmd = root.getBy(ctx);
 		assertNull(cmd);
+	}
+	
+	@Test
+	public void testConditionAnd()
+	{
+		SaacContainer f = c
+		(
+			"doWhen",
+			SaacContainer.create
+			(
+				BoolFunctions.class,
+				"and", 
+				c("isAfterDate", create(System.currentTimeMillis()-15000)),
+				c("isBeforeDate", create(System.currentTimeMillis()+15000))
+			),
+			
+			//direct values being wrapped to getter function
+			c
+			(
+				"newEntryWithAttributes",
+				//using an array declaration for vararg params
+				createArray().addArgument
+				(
+					c("knownAttribute", create(WellKnownAttributes.COLOR.name()), create("red")),
+					c("newFreeAttribute", create("startValue"), create("myValue"))
+				)
+			)
+		);
+		
+		SaacTestComponents saac = SaacTestTools.createSaacTestDefaultComponents();
+		SaacEnv env = saac.compile(f);
+		GetBy1<ModificationCommand, EvalContext> root = (GetBy1<ModificationCommand, EvalContext>) env.getRoot();
+		
+		EvalContext ctx = new EvalContext();
+		ModificationCommand cmd = root.getBy(ctx);
+		assertNotNull(cmd);
+		ActorDescriptor ad = (ActorDescriptor) cmd;
+		
+		assertEquals(2, ad.attributes.size());
+		assertEquals("COLOR", ad.attributes.get(0).getName());
+		assertEquals("red", ad.attributes.get(0).getValue());
+		
+		assertEquals("startValue", ad.attributes.get(1).getName());
+		assertEquals("myValue", ad.attributes.get(1).getValue());
 	}
 }

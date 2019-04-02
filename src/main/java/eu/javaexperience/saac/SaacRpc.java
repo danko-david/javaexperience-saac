@@ -1,8 +1,5 @@
 package eu.javaexperience.saac;
 
-import static eu.javaexperience.log.LogLevel.*;
-import static eu.javaexperience.log.LoggingTools.*;
-
 import java.io.PrintWriter;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.InvocationTargetException;
