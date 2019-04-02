@@ -28,6 +28,7 @@ import eu.javaexperience.reflect.Mirror;
 import eu.javaexperience.rpc.bidirectional.BidirectionalRpcDefaultProtocol;
 import eu.javaexperience.saac.SaacIgnore;
 import eu.javaexperience.saac.SaacServerUnit;
+import eu.javaexperience.saac.exceptions.SaacFunctionCreationException;
 import eu.javaexperience.text.StringTools;
 
 public class Functions
@@ -233,8 +234,11 @@ public class Functions
 			}
 			catch (Exception e)
 			{
-				Mirror.propagateAnyway(e);
-				return null;
+				SaacFunctionCreationException ex = new SaacFunctionCreationException("Can't create function",e);
+				ex.function = this;
+				ex.functionName = id;
+				ex.arguments = arguments;
+				throw ex;
 			}
 		}
 

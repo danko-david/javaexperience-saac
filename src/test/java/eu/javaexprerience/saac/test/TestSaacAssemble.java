@@ -9,7 +9,6 @@ import eu.javaexperience.interfaces.simple.getBy.GetBy1;
 import eu.javaexperience.saac.SaacEnv;
 import eu.javaexperience.saac.client.SaacContainer;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.ActorDescriptor;
-import eu.javaexprerience.saac.test.SaacFunctionsForTest.EntityAttribute;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.EvalContext;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.ModificationCommand;
 import eu.javaexprerience.saac.test.SaacFunctionsForTest.WellKnownAttributes;
@@ -266,4 +265,7 @@ public class TestSaacAssemble
 		assertEquals("startValue", ad.attributes.get(1).getName());
 		assertEquals("myValue", ad.attributes.get(1).getValue());
 	}
+	
+	//TODO test for errors: not enought argument provided, user compileAndCheckFor that.
+	//TODO check for illegal argument exception
 }
