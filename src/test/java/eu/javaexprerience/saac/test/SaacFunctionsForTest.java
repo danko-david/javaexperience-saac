@@ -1,7 +1,13 @@
 package eu.javaexprerience.saac.test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import eu.javaexperience.collection.map.SmallMap;
 import eu.javaexperience.interfaces.simple.getBy.GetBy1;
@@ -20,6 +26,38 @@ public class SaacFunctionsForTest
 		ARRAY
 	}
 	
+	public enum WellKnownAttributes
+	{
+		CAPACITY,
+		DIMENSION,
+		COLOR,
+	}
+	
+	public static interface EntityAttribute
+	{
+		public String getName();
+		public Object getValue();
+		
+	};
+	
+	public static class WellKnownEntityAttribute implements EntityAttribute
+	{
+		public WellKnownAttributes attr;
+		public Object value;
+		
+		@Override
+		public String getName()
+		{
+			return attr.name();
+		}
+
+		@Override
+		public Object getValue()
+		{
+			return value;
+		}
+	}
+	
 	public static class EvalContext
 	{
 		public int iVal;
@@ -32,18 +70,18 @@ public class SaacFunctionsForTest
 		public Object etc;
 	}
 	
-	public static interface ModificationCommand
-	{
-		
-	}
+	public static interface ModificationCommand{}
 	
 	public static class ActorDescriptor implements ModificationCommand
 	{
+		public boolean createEntity;
 		public boolean deleteEntity;
 		public boolean updateEntity;
 		
 		public String newKey;
 		public String newValue;
+		
+		public List<EntityAttribute> attributes = new ArrayList<>();
 		
 		public ActorDescriptor delete()
 		{
@@ -90,6 +128,75 @@ public class SaacFunctionsForTest
 		return (ctx)-> Boolean.TRUE == eval.getBy(ctx)?new ActorDescriptor().update():null;
 	}
 	
+	public static GetBy1<ModificationCommand, EvalContext> doWhen
+	(
+		GetBy1<Boolean, EvalContext> check,
+		GetBy1<ModificationCommand, EvalContext> act
+	)
+	{
+		return new GetBy1<ModificationCommand, EvalContext>()
+		{
+			@Override
+			public ModificationCommand getBy(EvalContext a)
+			{
+				if(Boolean.TRUE == check.getBy(a))
+				{
+					return act.getBy(a);
+				}
+				return null;
+			}
+		};
+	}
+
+/***************************** AttributeCreators ******************************/
+	public static WellKnownEntityAttribute knownAttribute
+	(
+		WellKnownAttributes attr,
+		Object value
+	)
+	{
+		WellKnownEntityAttribute ret = new WellKnownEntityAttribute();
+		ret.attr = attr;
+		ret.value = value;
+		return ret;
+	}
+	
+	public static EntityAttribute newFreeAttribute
+	(
+		String attr,
+		Object value
+	)
+	{
+		return new EntityAttribute()
+		{
+			@Override
+			public String getName()
+			{
+				return attr;
+			}
+
+			@Override
+			public Object getValue()
+			{
+				return value;
+			}
+		};
+	}
+	
+	public static ModificationCommand newEntryWithAttributes(EntityAttribute... atts)
+	{
+		ActorDescriptor ret = new ActorDescriptor();
+		ret.createEntity = true;
+		Collections.addAll(ret.attributes, atts);
+		
+		return ret;
+	}
+	
+	public static GetBy1<ModificationCommand, ?> funcNewEntryWithAttributes(EntityAttribute... atts)
+	{
+		return (a)->newEntryWithAttributes(atts);
+	}
+	
 /****************************** ActByDecision2 ********************************/
 	
 	public static GetBy1<ActorDescriptor, ExtendedEvalContext> deleteByExtDescision(GetBy1<Boolean, ExtendedEvalContext> eval)
@@ -110,7 +217,7 @@ public class SaacFunctionsForTest
 		return (ctx)->check.getBy(ctx.etc);
 	}
 	
-/****************************** AssertFunctions *******************************/
+/****************************** CheckerFunctions ******************************/
 	
 	public static GetBy1<Boolean, EvalContext> isIValue(GetBy1<Boolean, Integer> eval)
 	{
@@ -125,6 +232,18 @@ public class SaacFunctionsForTest
 	public static GetBy1<Boolean, EvalContext> isDValue(GetBy1<Boolean, Double> eval)
 	{
 		return (ctx)->eval.getBy(ctx.dVal);
+	}
+	
+/************************* Unbound checker functions **************************/
+	
+	public static GetBy1<Boolean, ?> isAfterDate(Date d)
+	{
+		return o->System.currentTimeMillis() >= d.getTime();
+	}
+	
+	public static GetBy1<Boolean, ?> isBeforeDate(Date d)
+	{
+		return o->System.currentTimeMillis() < d.getTime();
 	}
 	
 /************************** 0th level functions *******************************/

@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.javaexperience.collection.CollectionTools;
+import eu.javaexperience.datareprez.DataCommon;
+import eu.javaexperience.datareprez.DataObject;
+import eu.javaexperience.datareprez.DataReprezDialectTools;
+import eu.javaexperience.datareprez.DataReprezTools;
+import eu.javaexperience.datareprez.convertFrom.DataWrapper;
 import eu.javaexperience.interfaces.ObjectWithProperty;
 import eu.javaexperience.interfaces.ObjectWithPropertyStorage;
 
@@ -45,6 +50,23 @@ public class SaacContainer implements ObjectWithProperty
 		return ret;
 	}
 	
+	public static SaacContainer createArray()
+	{
+		SaacContainer ret = new SaacContainer();
+		ret.id = "";
+		ret.content = "";
+		return ret;
+	}
+	
+	public SaacContainer addArgument(SaacContainer... args)
+	{
+		for(SaacContainer a:args)
+		{
+			this.args.add(a);
+		}
+		
+		return this;
+	}
 	
 	protected static final ObjectWithPropertyStorage<SaacContainer> PROPS = new ObjectWithPropertyStorage<>();
 	static
@@ -52,6 +74,17 @@ public class SaacContainer implements ObjectWithProperty
 		PROPS.addExaminer("id", (e)->e.id);
 		PROPS.addExaminer("content", (e)->e.content);
 		PROPS.addExaminer("args", (e)->e.args);
+	}
+	
+	protected static final DataWrapper DATA_WRAPPER = DataReprezTools.combineWrappers
+	(
+		DataReprezTools.WRAP_ARRAY_COLLECTION_MAP,
+		DataReprezTools.WRAP_CLASS__OBJECT_WITH_PROPERTY
+	);
+	
+	public DataObject serialize(DataCommon comm)
+	{
+		return (DataObject) DATA_WRAPPER.wrap(DATA_WRAPPER, comm, this);
 	}
 	
 	@Override

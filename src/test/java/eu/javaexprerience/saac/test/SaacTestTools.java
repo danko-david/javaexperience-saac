@@ -1,11 +1,15 @@
 package eu.javaexprerience.saac.test;
 
+import eu.javaexperience.datareprez.DataObject;
+import eu.javaexperience.datareprez.javaImpl.DataObjectJavaImpl;
+import eu.javaexperience.datareprez.jsonImpl.DataObjectJsonImpl;
 import eu.javaexperience.functional.BoolFunctions;
 import eu.javaexperience.functional.ComparableFunctions;
 import eu.javaexperience.functional.GeneralFunctions;
 import eu.javaexperience.rpc.SimpleRpcRequest;
 import eu.javaexperience.rpc.SimpleRpcSession;
 import eu.javaexperience.rpc.bidirectional.BidirectionalRpcDefaultProtocol;
+import eu.javaexperience.saac.SaacEnv;
 import eu.javaexperience.saac.SaacFunctionCollection;
 import eu.javaexperience.saac.SaacRpc;
 import eu.javaexperience.saac.SaacRpc.FunctionDescriptor;
@@ -28,6 +32,13 @@ public class SaacTestTools
 		public SimpleRpcRequest createRpcRequest()
 		{
 			return new SimpleRpcRequest(createRpcSession());
+		}
+
+		public SaacEnv compile(SaacContainer root)
+		{
+			DataObject ser = root.serialize(DataObjectJsonImpl.instane);
+			System.out.println(ser.getImpl());
+			return SaacEnv.create(coll.getFunctions(), ser, null);
 		}
 	}
 	

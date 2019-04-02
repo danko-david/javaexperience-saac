@@ -1,6 +1,7 @@
 package eu.javaexperience.saac;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import eu.javaexperience.functional.saac.Functions.Param;
 import eu.javaexperience.functional.saac.Functions.PreparedFunction;
 import eu.javaexperience.interfaces.simple.SimpleGet;
 import eu.javaexperience.interfaces.simple.getBy.GetBy1;
+import eu.javaexperience.interfaces.simple.getBy.GetBy2;
 import eu.javaexperience.interfaces.simple.publish.SimplePublish1;
 import eu.javaexperience.reflect.CastTo;
 import eu.javaexperience.reflect.Mirror;
@@ -147,8 +149,9 @@ public class SaacEnv
 		}
 	}
 	
-	protected Object parse(DataObject obj, Class<?> accept)
+	protected Object parse(DataObject obj, Type acceptType)
 	{
+		Class accept = Mirror.extracClass(acceptType);
 		//{"id":"","content":"","parent":null,"args":[]}
 		{
 			String id = extractString(obj, SaacTools.SAAC_FIELD_ID);
@@ -180,8 +183,9 @@ public class SaacEnv
 					//even if it's accetable, because only in that case will be wrapped with GetBy1
 					
 					//from the other hand this function might be wrapped if any of it's argument evaluated in runtime.
-					wrapRet = !Mirror.isVoid(retClass) && !SimplePublish1.class.isAssignableFrom(accept); 
-							//!accept.isAssignableFrom(retClass);
+					wrapRet = !Mirror.isVoid(retClass) && !SimplePublish1.class.isAssignableFrom(accept) 
+							//!accept.isAssignableFrom(retClass)
+					;
 				}
 				
 				for(int i=0;i<call.length;++i)
@@ -247,8 +251,29 @@ public class SaacEnv
 						{
 							reqType = PrimitiveTools.toObjectClassType(reqType, reqType);
 						}
-						//need to extact or evaluate in runtime, or unamingously: it will be extracted in runtime 
-						paramWraps[i] = !reqType.isAssignableFrom(call[i].getClass()) || SaacSimplePublishWrapper.class.isAssignableFrom(call[i].getClass());
+						
+						//TODO add direct wrap: GetBy1<T,?> (or SimplePublish<T>)required and a T given
+						boolean wrapParam = !reqType.isAssignableFrom(call[i].getClass()) || SaacSimplePublishWrapper.class.isAssignableFrom(call[i].getClass());
+						if(wrapParam)
+						{
+							Object o = tryWrapSameOfArray(reqType, call[i]);
+							if(null != o)
+							{
+								call[i] = o;
+								continue;
+							}
+							
+							o = tryWrapConstantAsSourceFunction(reqType, call[i]);
+							if(null != o)
+							{
+								call[i] = o;
+								//not needed to wrap in runtime, we have been done that.
+								continue;
+							}
+							
+							//need to extact or evaluate in runtime, or unamingously: it will be extracted in runtime
+							paramWraps[i] = wrapParam;
+						}
 					}
 				}
 				
@@ -353,6 +378,65 @@ public class SaacEnv
 		}
 		
 		return null;
+	}
+	
+	public static Object tryWrapSameOfArray(Class reqType, Object object)
+	{
+		if(reqType.isArray())
+		{
+			Class cls = reqType.getComponentType();
+			if(cls.isAssignableFrom(object.getClass()))
+			{
+				Object[] ret = (Object[]) Array.newInstance(cls, 1);
+				ret[0] = object;
+				return ret;
+			}
+		}
+		return null;
+	}
+
+	public static Object tryWrapConstantAsSourceFunction(Type reqType, Object value)
+	{
+		Class req = Mirror.extracClass(reqType);
+		if(req.isAssignableFrom(SimpleGet.class))
+		{
+			//TODO when it's raw just let them go, if Generic bounding specified
+			// check them, on mismatch throw exception
+			return new SimpleGet()
+			{
+				@Override
+				public Object get()
+				{
+					return value;
+				}
+			};
+		}
+		else if(req.isAssignableFrom(GetBy1.class))
+		{
+			return new GetBy1()
+			{
+				@Override
+				public Object getBy(Object o)
+				{
+					return value;
+				}
+			};
+		}
+		else if(req.isAssignableFrom(GetBy2.class))
+		{
+			return new GetBy2()
+			{
+				@Override
+				public Object getBy(Object o, Object p)
+				{
+					return value;
+				}
+			};
+		}
+		//getBy3 so on
+		
+		return null;
+		
 	}
 	
 	protected static boolean isUseful(Object o)
